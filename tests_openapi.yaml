@@ -94,12 +94,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -330,12 +324,6 @@ paths:
                         values:
                           team: 'team_7n4k5p8m2r6t9w3x'
                           name: 'E-commerce Load Test'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -406,24 +394,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenErrorResponseContent'
-        '404':
-          description: NotFoundError 404 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -531,12 +507,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -734,12 +704,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -960,22 +924,6 @@ components:
       required:
         - threshold
         - timeframeInSeconds
-    GoneErrorResponseContent:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-        reasons:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorContent'
-        values:
-          $ref: '#/components/schemas/SimpleDictionary'
-      required:
-        - code
-        - message
     Instance:
       type: object
       properties:

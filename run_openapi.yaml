@@ -29,16 +29,22 @@ paths:
                   - $ref: '#/components/schemas/GenericClientErrorResponseContent'
         '401':
           description: UnauthorizedError 401 response
-        '403':
-          description: ForbiddenError 403 response
-        '404':
-          description: NotFoundError 404 response
-        '500':
-          description: GenericServerError 500 response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
   /api/public/runs:
     get:
       operationId: RunReadAll
@@ -69,16 +75,16 @@ paths:
                   - $ref: '#/components/schemas/GenericClientErrorResponseContent'
         '401':
           description: UnauthorizedError 401 response
-        '403':
-          description: ForbiddenError 403 response
-        '404':
-          description: NotFoundError 404 response
-        '500':
-          description: GenericServerError 500 response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
   /api/public/runs/{runId}:
     delete:
       operationId: RunDeleteOne
@@ -101,16 +107,16 @@ paths:
                   - $ref: '#/components/schemas/GenericClientErrorResponseContent'
         '401':
           description: UnauthorizedError 401 response
-        '403':
-          description: ForbiddenError 403 response
-        '404':
-          description: NotFoundError 404 response
-        '500':
-          description: GenericServerError 500 response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
   /api/public/runs/{runId}/description:
     put:
       operationId: RunUpdateDescription
@@ -143,16 +149,22 @@ paths:
                   - $ref: '#/components/schemas/GenericClientErrorResponseContent'
         '401':
           description: UnauthorizedError 401 response
-        '403':
-          description: ForbiddenError 403 response
-        '404':
-          description: NotFoundError 404 response
-        '500':
-          description: GenericServerError 500 response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
   /api/public/runs/{runId}/title:
     put:
       operationId: RunUpdateTitle
@@ -185,16 +197,22 @@ paths:
                   - $ref: '#/components/schemas/GenericClientErrorResponseContent'
         '401':
           description: UnauthorizedError 401 response
-        '403':
-          description: ForbiddenError 403 response
-        '404':
-          description: NotFoundError 404 response
-        '500':
-          description: GenericServerError 500 response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
   /api/public/simulations/start:
     post:
       operationId: SimulationStart
@@ -226,22 +244,28 @@ paths:
                   - $ref: '#/components/schemas/GenericClientErrorResponseContent'
         '401':
           description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
         '403':
           description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
         '404':
           description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-        '500':
-          description: GenericServerError 500 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericServerErrorResponseContent'
 components:
   schemas:
     AssertionResponse:
@@ -260,10 +284,21 @@ components:
     BadRequestErrorResponseContent:
       type: object
       properties:
-        error:
-          $ref: '#/components/schemas/ErrorContent'
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
       required:
-        - error
+        - code
+        - message
     ConflictErrorResponseContent:
       type: object
       properties:
@@ -333,14 +368,25 @@ components:
         - reportsPath
         - runId
         - runsPath
-    GenericClientErrorResponseContent:
+    ForbiddenErrorResponseContent:
       type: object
       properties:
-        error:
-          $ref: '#/components/schemas/ErrorContent'
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
       required:
-        - error
-    GenericServerErrorResponseContent:
+        - code
+        - message
+    GenericClientErrorResponseContent:
       type: object
       properties:
         error:
@@ -423,6 +469,24 @@ components:
       required:
         - threshold
         - timeframeInSeconds
+    NotFoundErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
     OrderRequest:
       type: string
       enum:
@@ -685,3 +749,21 @@ components:
       required:
         - key
         - value
+    UnauthorizedErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message

@@ -59,12 +59,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -161,12 +155,6 @@ paths:
                         message: Sources repository name 'My Gatling Tests Repository' already exists for team team_7n4k5p8m2r6t9w3x
                         values:
                           name: My Gatling Tests Repository
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -255,12 +243,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -300,12 +282,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenErrorResponseContent'
-        '404':
-          description: NotFoundError 404 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFoundErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
@@ -326,20 +302,6 @@ paths:
                             tests:
                               - test_8itd543k1j889x65atapaf7z1h
                               - test_3uhu59ta9fyrbqzkc1rckczuko
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
-              examples:
-                repositoryNotFound:
-                  summary: Sources repository not found
-                  value:
-                    code: SOURCES_REPOSITORY_NOT_FOUND_ERROR
-                    message: Sources repository 'sources_repository_omk5ukadpib3fnkkmutj1x69uo' not found
-                    values:
-                      sourcesRepositoryId: sources_repository_omk5ukadpib3fnkkmutj1x69uo
         '422':
           description: UnprocessableContentError 422 response
           content:
@@ -431,24 +393,6 @@ components:
         - code
         - message
     ForbiddenErrorResponseContent:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-        reference:
-          type: string
-        reasons:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorContent'
-        values:
-          $ref: '#/components/schemas/SimpleDictionary'
-      required:
-        - code
-        - message
-    GoneErrorResponseContent:
       type: object
       properties:
         code:
