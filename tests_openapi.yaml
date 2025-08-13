@@ -1,0 +1,1419 @@
+openapi: 3.0.2
+info:
+  title: TestEndpoints
+  version: 0.0.0
+paths:
+  /api/public/v2/tests:
+    get:
+      operationId: TestReadAll
+      parameters:
+        - name: teamId
+          in: query
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+          explode: true
+          examples:
+            multipleTeams:
+              summary: Filter tests by multiple teams
+              value:
+                - 'team_7n4k5p8m2r6t9w3x'
+                - 'team_3b8c4d2f6g9h5j7k'
+            singleTeam:
+              summary: Filter tests by single team
+              value:
+                - 'team_7n4k5p8m2r6t9w3x'
+      responses:
+        '200':
+          description: TestReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestReadAllResponse'
+              examples:
+                testsList:
+                  summary: List of tests with different source types
+                  value:
+                    data:
+                      - _id: 'test_2m4n6p8r9t3w5x7y'
+                        _type: 'test'
+                        _teamId: 'team_7n4k5p8m2r6t9w3x'
+                        name: 'E-commerce Load Test'
+                        source:
+                          type: 'packaged'
+                      - _id: 'test_5h7j9k2m4n6p8r3t'
+                        _type: 'test'
+                        _teamId: 'team_7n4k5p8m2r6t9w3x'
+                        name: 'API Performance Test'
+                        source:
+                          type: 'build_from_sources'
+                      - _id: 'test_8k3m5n7p9r2t4w6x'
+                        _type: 'test'
+                        _teamId: 'team_3b8c4d2f6g9h5j7k'
+                        name: 'User Login Test'
+                        source:
+                          type: 'packaged'
+                    relatedResources:
+                      'team_7n4k5p8m2r6t9w3x':
+                        _id: 'team_7n4k5p8m2r6t9w3x'
+                        _type: 'team'
+                        name: 'Engineering Team'
+                      'team_3b8c4d2f6g9h5j7k':
+                        _id: 'team_3b8c4d2f6g9h5j7k'
+                        _type: 'team'
+                        name: 'QA Team'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+    post:
+      operationId: TestCreateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRequest'
+            examples:
+              createPackagedTest:
+                summary: Create test from package
+                value:
+                  name: 'E-commerce Load Test'
+                  distribution:
+                    loadGenerators:
+                      - location: 'managed_location_us-east-1'
+                        instance:
+                          count: 5
+                        loadPercentage: 60
+                      - location: 'managed_location_eu-west-1'
+                        instance:
+                          count: 3
+                        loadPercentage: 40
+                  execution:
+                    meaningfulTimeWindow:
+                      rampUpSeconds: 60
+                      rampDownSeconds: 30
+                    systemProperties:
+                      'test.environment': 'staging'
+                    environmentVariables:
+                      'API_ENDPOINT': 'https://staging.api.example.com'
+                    ignoreGlobalProperties: false
+                    stopCriteria:
+                      - type: 'globalResponseTime'
+                        timeframeInSeconds: 30
+                        threshold:
+                          percentile: 95
+                          maxMilliseconds: 2000
+                      - type: 'globalErrorRatio'
+                        timeframeInSeconds: 10
+                        threshold:
+                          maxPercentage: 5
+                  source:
+                    type: 'packaged'
+                    packageId: 'package_4f6g8h2j3k5m7n9p'
+                    simulation: 'com.example.EcommerceSimulation'
+              createBuildFromSourcesTest:
+                summary: Create test from sources repository
+                value:
+                  name: 'API Performance Test'
+                  distribution:
+                    loadGenerators:
+                      - location: 'managed_location_us-west-2'
+                        instance:
+                          count: 10
+                        loadPercentage: 100
+                  execution:
+                    meaningfulTimeWindow:
+                      rampUpSeconds: 120
+                      rampDownSeconds: 60
+                    systemProperties:
+                      'test.environment': 'staging'
+                    environmentVariables:
+                      'API_ENDPOINT': 'https://staging.api.example.com'
+                    ignoreGlobalProperties: true
+                    stopCriteria:
+                      - type: 'meanCpu'
+                        timeframeInSeconds: 10
+                        threshold:
+                          maxPercentage: 90
+                  source:
+                    type: 'build_from_sources'
+                    sourcesRepositoryId: 'sources_repository_omk5ukadpib3fnkkmutj1x69uo'
+                    buildTool:
+                      type: 'maven'
+                    simulation: 'com.example.ApiLoadTest'
+                    workingDirectory: 'performance-tests'
+                    branch: 'feature/new-scenarios'
+        required: true
+      responses:
+        '201':
+          description: TestCreateOne 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestCreateOneResponse'
+              examples:
+                createdPackagedTest:
+                  summary: Successfully created test from package
+                  value:
+                    data:
+                      _id: 'test_2m4n6p8r9t3w5x7y'
+                      _type: 'test'
+                      _teamId: 'team_7n4k5p8m2r6t9w3x'
+                      name: 'E-commerce Load Test'
+                      distribution:
+                        loadGenerators:
+                          - location: 'managed_location_us-east-1'
+                            instance:
+                              count: 5
+                            loadPercentage: 60
+                          - location: 'managed_location_eu-west-1'
+                            instance:
+                              count: 3
+                            loadPercentage: 40
+                      execution:
+                        meaningfulTimeWindow:
+                          rampUpSeconds: 60
+                          rampDownSeconds: 30
+                        systemProperties:
+                          'gatling.http.pooledConnectionIdleTimeout': '60000'
+                          'gatling.data.file.bufferSize': '8192'
+                        environmentVariables:
+                          'BASE_URL': 'https://api.example.com'
+                        ignoreGlobalProperties: false
+                        stopCriteria:
+                          - type: 'globalResponseTime'
+                            timeframeInSeconds: 30
+                            threshold:
+                              percentile: 95
+                              maxMilliseconds: 2000
+                          - type: 'globalErrorRatio'
+                            timeframeInSeconds: 10
+                            threshold:
+                              maxPercentage: 5
+                      source:
+                        type: 'packaged'
+                        packageId: 'package_4f6g8h2j3k5m7n9p'
+                        simulation: 'com.example.EcommerceSimulation'
+                    relatedResources:
+                      'team_7n4k5p8m2r6t9w3x':
+                        _id: 'team_7n4k5p8m2r6t9w3x'
+                        _type: 'team'
+                        name: 'Engineering Team'
+                      'package_4f6g8h2j3k5m7n9p':
+                        _id: 'package_4f6g8h2j3k5m7n9p'
+                        _type: 'package'
+                        name: 'gatling-ecommerce-tests'
+                createdBuildFromSourcesTest:
+                  summary: Successfully created test from sources repository
+                  value:
+                    data:
+                      _id: 'test_5h7j9k2m4n6p8r3t'
+                      _type: 'test'
+                      _teamId: 'team_7n4k5p8m2r6t9w3x'
+                      name: 'API Performance Test'
+                      distribution:
+                        loadGenerators:
+                          - location: 'managed_location_us-west-2'
+                            instance:
+                              count: 10
+                            loadPercentage: 100
+                      execution:
+                        meaningfulTimeWindow:
+                          rampUpSeconds: 120
+                          rampDownSeconds: 60
+                        systemProperties:
+                          'test.environment': 'staging'
+                        environmentVariables:
+                          'API_ENDPOINT': 'https://staging.api.example.com'
+                        ignoreGlobalProperties: true
+                        stopCriteria:
+                          - type: 'meanCpu'
+                            timeframeInSeconds: 10
+                            threshold:
+                              maxPercentage: 90
+                      source:
+                        type: 'build_from_sources'
+                        sourcesRepositoryId: 'sources_repository_omk5ukadpib3fnkkmutj1x69uo'
+                        buildTool:
+                          type: 'maven'
+                        simulation: 'com.example.ApiLoadTest'
+                        workingDirectory: 'performance-tests'
+                        branch: 'feature/new-scenarios'
+                    relatedResources:
+                      'team_7n4k5p8m2r6t9w3x':
+                        _id: 'team_7n4k5p8m2r6t9w3x'
+                        _type: 'team'
+                        name: 'Engineering Team'
+                      'sources_repository_omk5ukadpib3fnkkmutj1x69uo':
+                        _id: 'sources_repository_omk5ukadpib3fnkkmutj1x69uo'
+                        _type: 'sources_repository'
+                        name: 'gatling-api-tests'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+              examples:
+                nameAlreadyExists:
+                  summary: Test name already exists in team
+                  value:
+                    code: 'TEST_CREATE_ERROR'
+                    message: 'Failed to create the test'
+                    reasons:
+                      - code: 'TEST_NAME_ALREADY_EXISTS'
+                        message: 'Test name 'E-commerce Load Test' already exists for team team_7n4k5p8m2r6t9w3x'
+                        values:
+                          team: 'team_7n4k5p8m2r6t9w3x'
+                          name: 'E-commerce Load Test'
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+              examples:
+                noCodeNotSupported:
+                  summary: No-code test creation not supported via API
+                  value:
+                    code: 'TEST_CREATE_ERROR'
+                    message: 'Nocode test creation is not available through public API'
+                    reasons:
+                      - code: 'TEST_NO_CODE_NOT_IMPLEMENTED'
+                        message: 'Nocode test creation is not available through public API'
+                sourceNotFound:
+                  summary: Referenced package not found
+                  value:
+                    code: 'TEST_CREATE_ERROR'
+                    message: 'Failed to create the test'
+                    reasons:
+                      - code: 'TEST_SOURCE_NOT_FOUND'
+                        message: 'Source package_xyz123invalid not found'
+                        values:
+                          source: 'package_xyz123invalid'
+                simulationNotFound:
+                  summary: Simulation not found in package
+                  value:
+                    code: 'TEST_CREATE_ERROR'
+                    message: 'The simulation NonExistentSimulation does not exist in the source package_4f6g8h2j3k5m7n9p'
+                    reasons:
+                      - code: 'TEST_SIMULATION_NOT_FOUND'
+                        message: 'The simulation NonExistentSimulation does not exist in the source package_4f6g8h2j3k5m7n9p'
+                        values:
+                          source: 'package_4f6g8h2j3k5m7n9p'
+                          simulation: 'NonExistentSimulation'
+  /api/public/v2/tests/{testId}:
+    delete:
+      operationId: TestDeleteOne
+      parameters:
+        - name: testId
+          in: path
+          schema:
+            type: string
+          required: true
+          examples:
+            validTestId:
+              summary: Valid test ID
+              value: 'test_2m4n6p8r9t3w5x7y'
+      responses:
+        '204':
+          description: TestDeleteOne 204 response
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+    get:
+      operationId: TestReadOne
+      parameters:
+        - name: testId
+          in: path
+          schema:
+            type: string
+          required: true
+          examples:
+            validTestId:
+              summary: Valid test ID
+              value: 'test_2m4n6p8r9t3w5x7y'
+      responses:
+        '200':
+          description: TestReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestReadOneResponse'
+              examples:
+                packagedTest:
+                  summary: Test created from package
+                  value:
+                    data:
+                      _id: 'test_2m4n6p8r9t3w5x7y'
+                      _type: 'test'
+                      _teamId: 'team_7n4k5p8m2r6t9w3x'
+                      name: 'E-commerce Load Test'
+                      distribution:
+                        loadGenerators:
+                          - location: 'managed_location_us-east-1'
+                            instance:
+                              count: 5
+                            loadPercentage: 60
+                          - location: 'managed_location_eu-west-1'
+                            instance:
+                              count: 3
+                            loadPercentage: 40
+                      execution:
+                        meaningfulTimeWindow:
+                          rampUpSeconds: 60
+                          rampDownSeconds: 30
+                        systemProperties:
+                          'gatling.http.pooledConnectionIdleTimeout': '60000'
+                          'gatling.data.file.bufferSize': '8192'
+                        environmentVariables:
+                          'BASE_URL': 'https://api.example.com'
+                        ignoreGlobalProperties: false
+                        stopCriteria:
+                          - type: 'globalResponseTime'
+                            timeframeInSeconds: 30
+                            threshold:
+                              percentile: 95
+                              maxMilliseconds: 2000
+                          - type: 'globalErrorRatio'
+                            timeframeInSeconds: 10
+                            threshold:
+                              maxPercentage: 5
+                      source:
+                        type: 'packaged'
+                        packageId: 'package_4f6g8h2j3k5m7n9p'
+                        simulation: 'com.example.EcommerceSimulation'
+                    relatedResources:
+                      'team_7n4k5p8m2r6t9w3x':
+                        _id: 'team_7n4k5p8m2r6t9w3x'
+                        _type: 'team'
+                        name: 'Engineering Team'
+                      'package_4f6g8h2j3k5m7n9p':
+                        _id: 'package_4f6g8h2j3k5m7n9p'
+                        _type: 'package'
+                        name: 'gatling-ecommerce-tests'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+    put:
+      operationId: TestUpdateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRequest'
+            examples:
+              updatePackagedTest:
+                summary: Update test to use different package
+                value:
+                  name: 'E-commerce Load Test - Updated'
+                  distribution:
+                    loadGenerators:
+                      - location: 'managed_location_us-east-1'
+                        instance:
+                          count: 8
+                        loadPercentage: 70
+                      - location: 'managed_location_eu-west-1'
+                        instance:
+                          count: 4
+                        loadPercentage: 30
+                  execution:
+                    meaningfulTimeWindow:
+                      rampUpSeconds: 90
+                      rampDownSeconds: 45
+                    systemProperties:
+                      'gatling.http.pooledConnectionIdleTimeout': '60000'
+                      'gatling.data.file.bufferSize': '16384'
+                    environmentVariables:
+                      'BASE_URL': 'https://api.example.com'
+                      'ENVIRONMENT': 'production'
+                    ignoreGlobalProperties: false
+                    stopCriteria:
+                      - type: 'globalResponseTime'
+                        timeframeInSeconds: 30
+                        threshold:
+                          percentile: 99
+                          maxMilliseconds: 1500
+                      - type: 'globalErrorRatio'
+                        timeframeInSeconds: 10
+                        threshold:
+                          maxPercentage: 2
+                  source:
+                    type: 'packaged'
+                    packageId: 'package_8j2k4m6n7p9r3t5w'
+                    simulation: 'com.example.EcommerceSimulationV2'
+              updateBuildFromSourcesTest:
+                summary: Update test to use different branch
+                value:
+                  name: 'API Performance Test - Main Branch'
+                  distribution:
+                    loadGenerators:
+                      - location: 'managed_location_us-west-2'
+                        instance:
+                          count: 15
+                        loadPercentage: 50
+                      - location: 'managed_location_us-east-1'
+                        instance:
+                          count: 15
+                        loadPercentage: 50
+                  execution:
+                    meaningfulTimeWindow:
+                      rampUpSeconds: 180
+                      rampDownSeconds: 90
+                    systemProperties:
+                      'test.environment': 'production'
+                      'test.threads': '100'
+                    environmentVariables:
+                      'API_ENDPOINT': 'https://api.example.com'
+                      'ENABLE_DEBUG': 'false'
+                    ignoreGlobalProperties: true
+                    stopCriteria:
+                      - type: 'meanCpu'
+                        timeframeInSeconds: 15
+                        threshold:
+                          maxPercentage: 85
+                      - type: 'globalResponseTime'
+                        timeframeInSeconds: 20
+                        threshold:
+                          percentile: 90
+                          maxMilliseconds: 1000
+                  source:
+                    type: 'build_from_sources'
+                    sourcesRepositoryId: 'sources_repository_omk5ukadpib3fnkkmutj1x69uo'
+                    buildTool:
+                      type: 'gradle'
+                    simulation: 'com.example.ApiStressTest'
+                    workingDirectory: 'performance-tests'
+                    branch: 'main'
+        required: true
+      parameters:
+        - name: testId
+          in: path
+          schema:
+            type: string
+          required: true
+          examples:
+            validTestId:
+              summary: Valid test ID
+              value: 'test_2m4n6p8r9t3w5x7y'
+      responses:
+        '200':
+          description: TestUpdateOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestUpdateOneResponse'
+              examples:
+                updatedPackagedTest:
+                  summary: Successfully updated test with new package
+                  value:
+                    data:
+                      _id: 'test_2m4n6p8r9t3w5x7y'
+                      _type: 'test'
+                      _teamId: 'team_7n4k5p8m2r6t9w3x'
+                      name: 'E-commerce Load Test - Updated'
+                      distribution:
+                        loadGenerators:
+                          - location: 'managed_location_us-east-1'
+                            instance:
+                              count: 8
+                            loadPercentage: 70
+                          - location: 'managed_location_eu-west-1'
+                            instance:
+                              count: 4
+                            loadPercentage: 30
+                      execution:
+                        meaningfulTimeWindow:
+                          rampUpSeconds: 90
+                          rampDownSeconds: 45
+                        systemProperties:
+                          'gatling.http.pooledConnectionIdleTimeout': '60000'
+                          'gatling.data.file.bufferSize': '16384'
+                        environmentVariables:
+                          'BASE_URL': 'https://api.example.com'
+                          'ENVIRONMENT': 'production'
+                        ignoreGlobalProperties: false
+                        stopCriteria:
+                          - type: 'globalResponseTime'
+                            timeframeInSeconds: 30
+                            threshold:
+                              percentile: 99
+                              maxMilliseconds: 1500
+                          - type: 'globalErrorRatio'
+                            timeframeInSeconds: 10
+                            threshold:
+                              maxPercentage: 2
+                      source:
+                        type: 'packaged'
+                        packageId: 'package_8j2k4m6n7p9r3t5w'
+                        simulation: 'com.example.EcommerceSimulationV2'
+                    relatedResources:
+                      'team_7n4k5p8m2r6t9w3x':
+                        _id: 'team_7n4k5p8m2r6t9w3x'
+                        _type: 'team'
+                        name: 'Engineering Team'
+                      'package_8j2k4m6n7p9r3t5w':
+                        _id: 'package_8j2k4m6n7p9r3t5w'
+                        _type: 'package'
+                        name: 'gatling-ecommerce-tests-v2'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+components:
+  schemas:
+    ApiTokenBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_ApiTokenType'
+            - default: api_token
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    BadRequestErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    BriefResponse:
+      oneOf:
+        - $ref: '#/components/schemas/PackageBriefResponse'
+        - $ref: '#/components/schemas/TestBriefResponse'
+        - $ref: '#/components/schemas/TeamBriefResponse'
+        - $ref: '#/components/schemas/ApiTokenBriefResponse'
+        - $ref: '#/components/schemas/UserBriefResponse'
+        - $ref: '#/components/schemas/SourcesRepositoryBriefResponse'
+        - $ref: '#/components/schemas/SsoGroupBriefResponse'
+    BriefResponseByResourceMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/BriefResponse'
+    BuildFromSource:
+      type: object
+      properties:
+        sourcesRepositoryId:
+          type: string
+        buildTool:
+          $ref: '#/components/schemas/BuildToolDto'
+        simulation:
+          type: string
+        workingDirectory:
+          type: string
+        branch:
+          type: string
+      required:
+        - buildTool
+        - simulation
+        - sourcesRepositoryId
+    BuildToolDto:
+      oneOf:
+        - $ref: '#/components/schemas/BuildToolDtoMaven'
+        - $ref: '#/components/schemas/BuildToolDtoMavenWrapper'
+        - $ref: '#/components/schemas/BuildToolDtoGradle'
+        - $ref: '#/components/schemas/BuildToolDtoGradleWrapper'
+        - $ref: '#/components/schemas/BuildToolDtoSbt'
+        - $ref: '#/components/schemas/BuildToolDtoNpm'
+      discriminator:
+        propertyName: type
+        mapping:
+          maven: '#/components/schemas/BuildToolDtoMaven'
+          sbt: '#/components/schemas/BuildToolDtoSbt'
+          gradle: '#/components/schemas/BuildToolDtoGradle'
+          maven-wrapper: '#/components/schemas/BuildToolDtoMavenWrapper'
+          npm: '#/components/schemas/BuildToolDtoNpm'
+          gradle-wrapper: '#/components/schemas/BuildToolDtoGradleWrapper'
+    BuildToolDtoGradle:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoGradleWrapper:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoMaven:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoMavenWrapper:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    BuildToolDtoNpm:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    BuildToolDtoSbt:
+      allOf:
+        - $ref: '#/components/schemas/DefaultCommand'
+        - $ref: '#/components/schemas/BuildToolDtoMixin'
+    ConflictErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    DefaultCommand:
+      type: object
+    Distribution:
+      type: object
+      properties:
+        loadGenerators:
+          type: array
+          items:
+            $ref: '#/components/schemas/LoadGenerator'
+      required:
+        - loadGenerators
+    ErrorContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    Execution:
+      type: object
+      properties:
+        meaningfulTimeWindow:
+          $ref: '#/components/schemas/MeaningfulTimeWindow'
+        systemProperties:
+          $ref: '#/components/schemas/SimpleDictionary'
+        environmentVariables:
+          $ref: '#/components/schemas/SimpleDictionary'
+        ignoreGlobalProperties:
+          type: boolean
+          default: false
+        stopCriteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/StopCriterionDto'
+      required:
+        - environmentVariables
+        - ignoreGlobalProperties
+        - meaningfulTimeWindow
+        - stopCriteria
+        - systemProperties
+    ForbiddenErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    GlobalErrorRatioCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxPercentageThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    GlobalResponseTimeCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxMillisecondsThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    GoneErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    Instance:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int32
+      required:
+        - count
+    LoadGenerator:
+      type: object
+      properties:
+        location:
+          type: string
+        instance:
+          $ref: '#/components/schemas/Instance'
+        loadPercentage:
+          type: integer
+          format: int32
+      required:
+        - instance
+        - loadPercentage
+        - location
+    MaxMillisecondsThresholdDto:
+      type: object
+      properties:
+        percentile:
+          type: number
+          format: double
+        maxMilliseconds:
+          type: integer
+          format: int32
+      required:
+        - maxMilliseconds
+        - percentile
+    MaxPercentageThresholdDto:
+      type: object
+      properties:
+        maxPercentage:
+          type: number
+          format: double
+      required:
+        - maxPercentage
+    MeanCpuCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxPercentageThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    MeaningfulTimeWindow:
+      type: object
+      properties:
+        rampUpSeconds:
+          type: integer
+          format: int32
+        rampDownSeconds:
+          type: integer
+          format: int32
+      required:
+        - rampDownSeconds
+        - rampUpSeconds
+    NoCode:
+      type: object
+      properties:
+        teamId:
+          type: string
+      required:
+        - teamId
+    NotFoundErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    PackageBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_PackageType'
+            - default: package
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    Packaged:
+      type: object
+      properties:
+        packageId:
+          type: string
+        simulation:
+          type: string
+      required:
+        - packageId
+        - simulation
+    SimpleDictionary:
+      type: object
+      additionalProperties:
+        type: string
+    Source:
+      oneOf:
+        - $ref: '#/components/schemas/SourceBuild_from_sources'
+        - $ref: '#/components/schemas/SourcePackaged'
+        - $ref: '#/components/schemas/SourceNo_code'
+      discriminator:
+        propertyName: type
+        mapping:
+          build_from_sources: '#/components/schemas/SourceBuild_from_sources'
+          packaged: '#/components/schemas/SourcePackaged'
+          no_code: '#/components/schemas/SourceNo_code'
+    SourceBrief:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TestTypeResponse'
+      required:
+        - type
+    SourceBuild_from_sources:
+      allOf:
+        - $ref: '#/components/schemas/BuildFromSource'
+        - $ref: '#/components/schemas/SourceMixin'
+    SourceItem:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TestTypeResponse'
+      required:
+        - type
+    SourceMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    SourceNo_code:
+      allOf:
+        - $ref: '#/components/schemas/NoCode'
+        - $ref: '#/components/schemas/SourceMixin'
+    SourcePackaged:
+      allOf:
+        - $ref: '#/components/schemas/Packaged'
+        - $ref: '#/components/schemas/SourceMixin'
+    SourcesRepositoryBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourcesRepositoryType'
+            - default: sources_repository
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    SsoGroupBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SsoGroupType'
+            - default: sso_group
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    StopCriterionDto:
+      oneOf:
+        - $ref: '#/components/schemas/StopCriterionDtoMeanCpu'
+        - $ref: '#/components/schemas/StopCriterionDtoGlobalErrorRatio'
+        - $ref: '#/components/schemas/StopCriterionDtoGlobalResponseTime'
+      discriminator:
+        propertyName: type
+        mapping:
+          meanCpu: '#/components/schemas/StopCriterionDtoMeanCpu'
+          globalErrorRatio: '#/components/schemas/StopCriterionDtoGlobalErrorRatio'
+          globalResponseTime: '#/components/schemas/StopCriterionDtoGlobalResponseTime'
+    StopCriterionDtoGlobalErrorRatio:
+      allOf:
+        - $ref: '#/components/schemas/GlobalErrorRatioCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoGlobalResponseTime:
+      allOf:
+        - $ref: '#/components/schemas/GlobalResponseTimeCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoMeanCpu:
+      allOf:
+        - $ref: '#/components/schemas/MeanCpuCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    TeamBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TeamType'
+            - default: team
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    TestBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        source:
+          $ref: '#/components/schemas/SourceBrief'
+      required:
+        - _id
+        - _type
+        - name
+        - source
+    TestCreateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TestDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TestDetailsResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        distribution:
+          $ref: '#/components/schemas/Distribution'
+        execution:
+          $ref: '#/components/schemas/Execution'
+        source:
+          $ref: '#/components/schemas/Source'
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        _teamId:
+          type: string
+      required:
+        - _id
+        - _teamId
+        - _type
+        - distribution
+        - execution
+        - name
+        - source
+    TestItemResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        _teamId:
+          type: string
+        source:
+          $ref: '#/components/schemas/SourceItem'
+      required:
+        - _id
+        - _teamId
+        - _type
+        - name
+        - source
+    TestReadAllResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestItemResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TestReadOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TestDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    TestRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        distribution:
+          $ref: '#/components/schemas/Distribution'
+        execution:
+          $ref: '#/components/schemas/Execution'
+        source:
+          $ref: '#/components/schemas/Source'
+      required:
+        - distribution
+        - execution
+        - name
+        - source
+    TestTypeResponse:
+      type: string
+      enum:
+        - build_from_sources
+        - packaged
+        - no_code
+    TestUpdateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TestDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    UnauthorizedErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    UnprocessableContentErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    UserBriefResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - email
+    _ApiTokenType:
+      type: string
+      enum:
+        - api_token
+    _PackageType:
+      type: string
+      enum:
+        - package
+    _SourcesRepositoryType:
+      type: string
+      enum:
+        - sources_repository
+    _SsoGroupType:
+      type: string
+      enum:
+        - sso_group
+    _TeamType:
+      type: string
+      enum:
+        - team
+    _TestType:
+      type: string
+      enum:
+        - test
+    _UserType:
+      type: string
+      enum:
+        - user

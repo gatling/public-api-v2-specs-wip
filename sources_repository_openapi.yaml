@@ -1,0 +1,760 @@
+openapi: 3.0.2
+info:
+  title: SourcesRepositoryEndpoints
+  version: 0.0.0
+paths:
+  /api/public/v2/sources-repositories:
+    get:
+      operationId: SourcesRepositoryReadAll
+      responses:
+        '200':
+          description: SourcesRepositoryReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourcesRepositoryReadAllResponse'
+              examples:
+                listSourcesRepositories:
+                  summary: List all sources repositories
+                  value:
+                    data:
+                      - _id: sources_repository_ygm856i7m39fmcar8ea36nj9no
+                        _type: sources_repository
+                        name: My Gatling Tests Repository
+                      - _id: sources_repository_omk5ukadpib3fnkkmutj1x69uo
+                        _type: sources_repository
+                        name: Performance Tests Repo
+                    relatedResources:
+                      team_7n4k5p8m2r6t9w3x:
+                        _id: team_7n4k5p8m2r6t9w3x
+                        _type: team
+                        name: Engineering Team
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+    post:
+      operationId: SourcesRepositoryCreateOne
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourcesRepositoryRequest'
+            examples:
+              createSourcesRepository:
+                summary: Create a new sources repository
+                value:
+                  name: My Gatling Tests Repository
+                  teamId: team_7n4k5p8m2r6t9w3x
+                  remote:
+                    url: https://github.com/mycompany/gatling-performance-tests
+        required: true
+      responses:
+        '201':
+          description: SourcesRepositoryCreateOne 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourcesRepositoryCreateOneResponse'
+              examples:
+                createdSourcesRepository:
+                  summary: Successfully created sources repository
+                  value:
+                    data:
+                      _id: sources_repository_ygm856i7m39fmcar8ea36nj9no
+                      _type: sources_repository
+                      name: My Gatling Tests Repository
+                      teamId: team_7n4k5p8m2r6t9w3x
+                      remote:
+                        url: https://github.com/mycompany/gatling-performance-tests
+                      _assets:
+                        tests: []
+                    relatedResources:
+                      team_7n4k5p8m2r6t9w3x:
+                        _id: team_7n4k5p8m2r6t9w3x
+                        _type: team
+                        name: Engineering Team
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+              examples:
+                forbiddenOperation:
+                  summary: User lacks permission to create repository in team
+                  value:
+                    code: SOURCES_REPOSITORY_FORBIDDEN_OPERATION_ERROR
+                    message: Cannot create sources repository for teamId
+                    values:
+                      teamId: team_7n4k5p8m2r6t9w3x
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+              examples:
+                nameAlreadyExists:
+                  summary: Repository name already exists in team
+                  value:
+                    code: SOURCES_REPOSITORY_CREATE_ERROR
+                    message: Failed to create the sources repository
+                    reasons:
+                      - code: SOURCES_REPOSITORY_NAME_ALREADY_EXISTS
+                        message: Sources repository name 'My Gatling Tests Repository' already exists for team team_7n4k5p8m2r6t9w3x
+                        values:
+                          name: My Gatling Tests Repository
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+  /api/public/v2/sources-repositories/{sourcesRepositoryId}:
+    get:
+      operationId: SourcesRepositoryReadOne
+      parameters:
+        - name: sourcesRepositoryId
+          in: path
+          schema:
+            type: string
+          required: true
+          examples:
+            validSourcesRepositoryId:
+              summary: Valid sources repository ID
+              value: sources_repository_ygm856i7m39fmcar8ea36nj9no
+      responses:
+        '200':
+          description: SourcesRepositoryReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourcesRepositoryReadOneResponse'
+              examples:
+                getSourcesRepository:
+                  summary: Get sources repository details
+                  value:
+                    data:
+                      _id: sources_repository_ygm856i7m39fmcar8ea36nj9no
+                      _type: sources_repository
+                      name: My Gatling Tests Repository
+                      teamId: team_7n4k5p8m2r6t9w3x
+                      remote:
+                        url: https://github.com/mycompany/gatling-performance-tests
+                      _assets:
+                        tests:
+                          - test_8itd543k1j889x65atapaf7z1h
+                          - test_3uhu59ta9fyrbqzkc1rckczuko
+                    relatedResources:
+                      team_7n4k5p8m2r6t9w3x:
+                        _id: team_7n4k5p8m2r6t9w3x
+                        _type: team
+                        name: Engineering Team
+                      test_8itd543k1j889x65atapaf7z1h:
+                        _id: test_8itd543k1j889x65atapaf7z1h
+                        _type: test
+                        name: My test
+                        source:
+                          type: build_from_sources
+                      test_3uhu59ta9fyrbqzkc1rckczuko:
+                        _id: test_3uhu59ta9fyrbqzkc1rckczuko
+                        _type: test
+                        name: My other test
+                        source:
+                          type: build_from_sources
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+    delete:
+      operationId: SourcesRepositoryDeleteOne
+      parameters:
+        - name: sourcesRepositoryId
+          in: path
+          schema:
+            type: string
+          required: true
+          examples:
+            validSourcesRepositoryId:
+              summary: Valid sources repository ID
+              value: sources_repository_omk5ukadpib3fnkkmutj1x69uo
+      responses:
+        '204':
+          description: SourcesRepositoryDeleteOne 204 response
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+              examples:
+                assetsStillAttached:
+                  summary: Cannot delete repository with attached simulations
+                  value:
+                    code: SOURCES_REPOSITORY_DELETE_ERROR
+                    message: Cannot delete the sources repository 'sources_repository_omk5ukadpib3fnkkmutj1x69uo' because there's still assets attached to it
+                    reasons:
+                      - code: SOURCES_REPOSITORY_DELETE_ASSETS_ERROR
+                        message: Assets are still using the sources repository 'sources_repository_omk5ukadpib3fnkkmutj1x69uo'
+                        values:
+                          _assets:
+                            tests:
+                              - test_8itd543k1j889x65atapaf7z1h
+                              - test_3uhu59ta9fyrbqzkc1rckczuko
+        '410':
+          description: GoneError 410 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoneErrorResponseContent'
+              examples:
+                repositoryNotFound:
+                  summary: Sources repository not found
+                  value:
+                    code: SOURCES_REPOSITORY_NOT_FOUND_ERROR
+                    message: Sources repository 'sources_repository_omk5ukadpib3fnkkmutj1x69uo' not found
+                    values:
+                      sourcesRepositoryId: sources_repository_omk5ukadpib3fnkkmutj1x69uo
+        '422':
+          description: UnprocessableContentError 422 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
+components:
+  schemas:
+    ApiTokenBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_ApiTokenType'
+            - default: api_token
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    BadRequestErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    BriefResponse:
+      oneOf:
+        - $ref: '#/components/schemas/PackageBriefResponse'
+        - $ref: '#/components/schemas/TestBriefResponse'
+        - $ref: '#/components/schemas/TeamBriefResponse'
+        - $ref: '#/components/schemas/ApiTokenBriefResponse'
+        - $ref: '#/components/schemas/UserBriefResponse'
+        - $ref: '#/components/schemas/SourcesRepositoryBriefResponse'
+        - $ref: '#/components/schemas/SsoGroupBriefResponse'
+    BriefResponseByResourceMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/BriefResponse'
+    ConflictErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    ErrorContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    ForbiddenErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    GoneErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    NotFoundErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    PackageBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_PackageType'
+            - default: package
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    Remote:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+    SimpleDictionary:
+      type: object
+      additionalProperties:
+        type: string
+    SourceBrief:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TestTypeResponse'
+      required:
+        - type
+    TestBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        source:
+          $ref: '#/components/schemas/SourceBrief'
+      required:
+        - _id
+        - _type
+        - name
+        - source
+    TestTypeResponse:
+      type: string
+      enum:
+        - build_from_sources
+        - packaged
+        - no_code
+    SourcesRepositoryAssets:
+      type: object
+      properties:
+        tests:
+          type: array
+          items:
+            type: string
+      required:
+        - tests
+    SourcesRepositoryBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourcesRepositoryType'
+            - default: sources_repository
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    SourcesRepositoryCreateOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/SourcesRepositoryDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    SourcesRepositoryDetailsResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourcesRepositoryType'
+            - default: sources_repository
+        name:
+          type: string
+        teamId:
+          type: string
+        remote:
+          $ref: '#/components/schemas/Remote'
+        _assets:
+          $ref: '#/components/schemas/SourcesRepositoryAssets'
+      required:
+        - _id
+        - _type
+        - _assets
+        - name
+        - remote
+        - teamId
+    SourcesRepositoryItemResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourcesRepositoryType'
+            - default: sources_repository
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    SourcesRepositoryReadAllResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourcesRepositoryItemResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    SourcesRepositoryReadOneResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/SourcesRepositoryDetailsResponse'
+        relatedResources:
+          $ref: '#/components/schemas/BriefResponseByResourceMap'
+      required:
+        - data
+        - relatedResources
+    SourcesRepositoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        teamId:
+          type: string
+        remote:
+          $ref: '#/components/schemas/Remote'
+      required:
+        - name
+        - remote
+        - teamId
+    SsoGroupBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SsoGroupType'
+            - default: sso_group
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    TeamBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TeamType'
+            - default: team
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    UnauthorizedErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    UnprocessableContentErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reference:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    UserBriefResponse:
+      type: object
+      properties:
+        email:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - email
+    _ApiTokenType:
+      type: string
+      enum:
+        - api_token
+    _PackageType:
+      type: string
+      enum:
+        - package
+    _TestType:
+      type: string
+      enum:
+        - test
+    _SourcesRepositoryType:
+      type: string
+      enum:
+        - sources_repository
+    _SsoGroupType:
+      type: string
+      enum:
+        - sso_group
+    _TeamType:
+      type: string
+      enum:
+        - team
+    _UserType:
+      type: string
+      enum:
+        - user

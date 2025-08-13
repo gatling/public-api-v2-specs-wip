@@ -1,0 +1,687 @@
+openapi: 3.0.2
+info:
+  title: RunEndpoints
+  version: 0.0.0
+paths:
+  /api/public/run:
+    get:
+      operationId: RunReadOne
+      parameters:
+        - name: run
+          in: query
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: RunReadOne 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicRunInformationResponse'
+        '400':
+          description: 400 Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BadRequestErrorResponseContent'
+                  - $ref: '#/components/schemas/GenericClientErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+        '403':
+          description: ForbiddenError 403 response
+        '404':
+          description: NotFoundError 404 response
+        '500':
+          description: GenericServerError 500 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+  /api/public/runs:
+    get:
+      operationId: RunReadAll
+      parameters:
+        - name: simulation
+          in: query
+          schema:
+            type: string
+          required: true
+        - name: order
+          in: query
+          schema:
+            $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '200':
+          description: RunReadAll 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunReadAllOutputPayload'
+        '400':
+          description: 400 Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BadRequestErrorResponseContent'
+                  - $ref: '#/components/schemas/GenericClientErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+        '403':
+          description: ForbiddenError 403 response
+        '404':
+          description: NotFoundError 404 response
+        '500':
+          description: GenericServerError 500 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+  /api/public/runs/{runId}:
+    delete:
+      operationId: RunDeleteOne
+      parameters:
+        - name: runId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '204':
+          description: RunDeleteOne 204 response
+        '400':
+          description: 400 Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BadRequestErrorResponseContent'
+                  - $ref: '#/components/schemas/GenericClientErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+        '403':
+          description: ForbiddenError 403 response
+        '404':
+          description: NotFoundError 404 response
+        '500':
+          description: GenericServerError 500 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+  /api/public/runs/{runId}/description:
+    put:
+      operationId: RunUpdateDescription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunDescriptionDto'
+        required: true
+      parameters:
+        - name: runId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: RunUpdateDescription 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunDescriptionDto'
+        '400':
+          description: 400 Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BadRequestErrorResponseContent'
+                  - $ref: '#/components/schemas/GenericClientErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+        '403':
+          description: ForbiddenError 403 response
+        '404':
+          description: NotFoundError 404 response
+        '500':
+          description: GenericServerError 500 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+  /api/public/runs/{runId}/title:
+    put:
+      operationId: RunUpdateTitle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunTitleDto'
+        required: true
+      parameters:
+        - name: runId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: RunUpdateTitle 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunTitleDto'
+        '400':
+          description: 400 Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BadRequestErrorResponseContent'
+                  - $ref: '#/components/schemas/GenericClientErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+        '403':
+          description: ForbiddenError 403 response
+        '404':
+          description: NotFoundError 404 response
+        '500':
+          description: GenericServerError 500 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+  /api/public/simulations/start:
+    post:
+      operationId: SimulationStart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartRequest'
+      parameters:
+        - name: simulation
+          in: query
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: SimulationStart 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalStartedSimulationResponse'
+        '400':
+          description: 400 Response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BadRequestErrorResponseContent'
+                  - $ref: '#/components/schemas/GenericClientErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+        '403':
+          description: ForbiddenError 403 response
+        '404':
+          description: NotFoundError 404 response
+        '409':
+          description: ConflictError 409 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictErrorResponseContent'
+        '500':
+          description: GenericServerError 500 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericServerErrorResponseContent'
+components:
+  schemas:
+    AssertionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        result:
+          type: boolean
+        actualValue:
+          type: number
+          format: double
+      required:
+        - message
+        - result
+    BadRequestErrorResponseContent:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorContent'
+      required:
+        - error
+    ConflictErrorResponseContent:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorContent'
+      required:
+        - error
+    ByApiToken:
+      type: object
+      properties:
+        tokenId:
+          type: string
+        name:
+          type: string
+      required:
+        - name
+        - tokenId
+    ByUser:
+      type: object
+      properties:
+        userId:
+          type: string
+      required:
+        - userId
+    DedicatedIpSnapshotResponse:
+      type: object
+      properties:
+        allocationId:
+          type: string
+        publicIp:
+          type: string
+      required:
+        - allocationId
+        - publicIp
+    ErrorContent:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+      required:
+        - errors
+        - message
+    ErrorDetail:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    ExternalStartedSimulationResponse:
+      type: object
+      properties:
+        className:
+          type: string
+        runId:
+          type: string
+        reportsPath:
+          type: string
+        runsPath:
+          type: string
+      required:
+        - className
+        - reportsPath
+        - runId
+        - runsPath
+    GenericClientErrorResponseContent:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorContent'
+      required:
+        - error
+    GenericServerErrorResponseContent:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/ErrorContent'
+      required:
+        - error
+    GlobalErrorRatioCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxPercentageThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    GlobalResponseTimeCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxMillisecondsThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    LocationSnapshotResponse:
+      type: object
+      properties:
+        locationId:
+          type: string
+        locationName:
+          type: string
+        size:
+          type: integer
+          format: int32
+        weight:
+          type: integer
+          format: int32
+        dedicatedIps:
+          type: array
+          items:
+            $ref: '#/components/schemas/DedicatedIpSnapshotResponse'
+      required:
+        - dedicatedIps
+        - locationId
+        - locationName
+        - size
+        - weight
+    MaxMillisecondsThresholdDto:
+      type: object
+      properties:
+        percentile:
+          type: number
+          format: double
+        maxMilliseconds:
+          type: integer
+          format: int32
+      required:
+        - maxMilliseconds
+        - percentile
+    MaxPercentageThresholdDto:
+      type: object
+      properties:
+        maxPercentage:
+          type: number
+          format: double
+      required:
+        - maxPercentage
+    MeanCpuCriterionDto:
+      type: object
+      properties:
+        timeframeInSeconds:
+          type: integer
+          format: int32
+        threshold:
+          $ref: '#/components/schemas/MaxPercentageThresholdDto'
+      required:
+        - threshold
+        - timeframeInSeconds
+    OrderRequest:
+      type: string
+      enum:
+        - first
+        - last
+    OverrideHostsByLocationRequest:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/StartHostConfigurationRequest'
+    PublicRunInformationResponse:
+      type: object
+      properties:
+        incrementalId:
+          type: integer
+          format: int32
+        runId:
+          type: string
+        idV2:
+          type: string
+        simulationId:
+          type: string
+        buildStart:
+          type: integer
+          format: int64
+        buildEnd:
+          type: integer
+          format: int64
+        deployStart:
+          type: integer
+          format: int64
+        deployEnd:
+          type: integer
+          format: int64
+        injectStart:
+          type: integer
+          format: int64
+        injectEnd:
+          type: integer
+          format: int64
+        status:
+          type: integer
+          format: int32
+        runSnapshot:
+          $ref: '#/components/schemas/RunSnapshotResponse'
+        comments:
+          $ref: '#/components/schemas/RunCommentResponse'
+        assertions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssertionResponse'
+        scenario:
+          type: string
+        request:
+          type: string
+        group:
+          type: string
+      required:
+        - assertions
+        - buildEnd
+        - buildStart
+        - comments
+        - deployEnd
+        - deployStart
+        - group
+        - idV2
+        - incrementalId
+        - injectEnd
+        - injectStart
+        - request
+        - runId
+        - runSnapshot
+        - scenario
+        - simulationId
+        - status
+    PublicRunResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        incrementalId:
+          type: integer
+          format: int32
+        injectStart:
+          type: integer
+          format: int64
+        injectEnd:
+          type: integer
+          format: int64
+      required:
+        - id
+        - incrementalId
+        - injectEnd
+        - injectStart
+    RunCommentResponse:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - description
+        - title
+    RunDescriptionDto:
+      type: object
+      properties:
+        description:
+          type: string
+      required:
+        - description
+    RunReadAllOutputPayload:
+      type: array
+      items:
+        $ref: '#/components/schemas/PublicRunResponse'
+    RunSnapshotResponse:
+      type: object
+      properties:
+        simulationName:
+          type: string
+        systemProperties:
+          $ref: '#/components/schemas/SimpleDictionary'
+        environmentVariables:
+          $ref: '#/components/schemas/SimpleDictionary'
+        useLocationWeights:
+          type: boolean
+        locationSnapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationSnapshotResponse'
+        stopCriteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/StopCriterionDto'
+        simulationClass:
+          type: string
+        trigger:
+          $ref: '#/components/schemas/RunTriggerResponse'
+        organizationId:
+          type: string
+      required:
+        - environmentVariables
+        - locationSnapshots
+        - simulationName
+        - stopCriteria
+        - systemProperties
+        - useLocationWeights
+    RunTitleDto:
+      type: object
+      properties:
+        title:
+          type: string
+      required:
+        - title
+    RunTriggerResponse:
+      oneOf:
+        - $ref: '#/components/schemas/RunTriggerResponseApiToken'
+        - $ref: '#/components/schemas/RunTriggerResponseUser'
+      discriminator:
+        propertyName: type
+        mapping:
+          apiToken: '#/components/schemas/RunTriggerResponseApiToken'
+          user: '#/components/schemas/RunTriggerResponseUser'
+    RunTriggerResponseApiToken:
+      allOf:
+        - $ref: '#/components/schemas/ByApiToken'
+        - $ref: '#/components/schemas/RunTriggerResponseMixin'
+    RunTriggerResponseMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    RunTriggerResponseUser:
+      allOf:
+        - $ref: '#/components/schemas/ByUser'
+        - $ref: '#/components/schemas/RunTriggerResponseMixin'
+    SimpleDictionary:
+      type: object
+      additionalProperties:
+        type: string
+    StartHostConfigurationRequest:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int32
+        weight:
+          type: integer
+          format: int32
+      required:
+        - size
+    StartOptionsRequest:
+      type: object
+      properties:
+        extraSystemProperties:
+          allOf:
+            - $ref: '#/components/schemas/SimpleDictionary'
+            - default: {}
+        extraEnvironmentVariables:
+          allOf:
+            - $ref: '#/components/schemas/SimpleDictionary'
+            - default: {}
+        overrideHostsByPool:
+          allOf:
+            - $ref: '#/components/schemas/OverrideHostsByLocationRequest'
+            - default: {}
+        title:
+          type: string
+        description:
+          type: string
+      required:
+        - extraEnvironmentVariables
+        - extraSystemProperties
+        - overrideHostsByPool
+    StartRequest:
+      oneOf:
+        - $ref: '#/components/schemas/StartOptionsRequest'
+        - type: array
+          items:
+            $ref: '#/components/schemas/SystemPropertyRequest'
+          title: legacy
+    StopCriterionDto:
+      oneOf:
+        - $ref: '#/components/schemas/StopCriterionDtoMeanCpu'
+        - $ref: '#/components/schemas/StopCriterionDtoGlobalErrorRatio'
+        - $ref: '#/components/schemas/StopCriterionDtoGlobalResponseTime'
+      discriminator:
+        propertyName: type
+        mapping:
+          meanCpu: '#/components/schemas/StopCriterionDtoMeanCpu'
+          globalErrorRatio: '#/components/schemas/StopCriterionDtoGlobalErrorRatio'
+          globalResponseTime: '#/components/schemas/StopCriterionDtoGlobalResponseTime'
+    StopCriterionDtoGlobalErrorRatio:
+      allOf:
+        - $ref: '#/components/schemas/GlobalErrorRatioCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoGlobalResponseTime:
+      allOf:
+        - $ref: '#/components/schemas/GlobalResponseTimeCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoMeanCpu:
+      allOf:
+        - $ref: '#/components/schemas/MeanCpuCriterionDto'
+        - $ref: '#/components/schemas/StopCriterionDtoMixin'
+    StopCriterionDtoMixin:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    SystemPropertyRequest:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+      required:
+        - key
+        - value
