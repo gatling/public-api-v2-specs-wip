@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  title: UserEndpoints with Examples
+  title: UserEndpoints
   version: '2'
 paths:
   /api/public/v2/users:
@@ -11,7 +11,7 @@ paths:
           in: query
           schema:
             type: string
-        - name: team
+        - name: teamId
           in: query
           style: form
           schema:
@@ -26,111 +26,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserReadAllResponse'
-              examples:
-                multipleUsers:
-                  summary: List of users with various roles
-                  value:
-                    data:
-                      - email: 'john.doe@example.com'
-                        roles:
-                          global: ['administrator']
-                          teams:
-                            - id: 'team_7n4k5p8m2r6t9w3x'
-                              role: 'administrator'
-                            - id: 'team_3b8c4d2f6g9h5j7k'
-                              role: 'leader'
-                        _type: 'user'
-                        _id: 'user_4f6g8h2j3k5m7n9p'
-                      - email: 'jane.smith@example.com'
-                        roles:
-                          global: ['contributor']
-                          teams:
-                            - id: 'team_7n4k5p8m2r6t9w3x'
-                              role: 'contributor'
-                        _type: 'user'
-                        _id: 'user_2b4c6d8f9g3h5j7k'
-                      - email: 'bob.wilson@example.com'
-                        roles:
-                          global: ['viewer']
-                          teams:
-                            - id: 'team_9p2m5k8n3r6t4w7x'
-                              role: 'viewer'
-                        _type: 'user'
-                        _id: 'user_8m2n4p6r7t9w3x5y'
-                    relatedResources:
-                      'team_7n4k5p8m2r6t9w3x':
-                        _id: 'team_7n4k5p8m2r6t9w3x'
-                        _type: 'team'
-                        name: 'Performance Team'
-                      'team_3b8c4d2f6g9h5j7k':
-                        _id: 'team_3b8c4d2f6g9h5j7k'
-                        _type: 'team'
-                        name: 'QA Automation Team'
-                      'team_9p2m5k8n3r6t4w7x':
-                        _id: 'team_9p2m5k8n3r6t4w7x'
-                        _type: 'team'
-                        name: 'DevOps Team'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-              examples:
-                conflictError:
-                  summary: Generic conflict error
-                  value:
-                    code: 'RESOURCE_CONFLICT_ERROR'
-                    message: 'The requested operation conflicts with the current state of the resource'
-                    reference: 'https://docs.gatling.io/api/public/errors#RESOURCE_CONFLICT_ERROR'
-                    values: {}
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
-              examples:
-                goneError:
-                  summary: Resource no longer available
-                  value:
-                    code: 'RESOURCE_GONE_ERROR'
-                    message: 'The requested resource is no longer available'
-                    reference: 'https://docs.gatling.io/api/public/errors#RESOURCE_GONE_ERROR'
-                    values: {}
         '422':
           description: UnprocessableContentError 422 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
-              examples:
-                unprocessableError:
-                  summary: Invalid request data
-                  value:
-                    code: 'VALIDATION_ERROR'
-                    message: 'The request contains invalid data'
-                    reference: 'https://docs.gatling.io/api/public/errors#VALIDATION_ERROR'
-                    values: {}
     post:
       operationId: UserCreateOne
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserItemRequest'
-            examples:
-              createUser:
-                summary: Create a new user with team roles
-                value:
-                  email: 'alice.johnson@example.com'
-                  roles:
-                    global: ['contributor']
-                    teams:
-                      - id: 'team_7n4k5p8m2r6t9w3x'
-                        role: 'contributor'
-                      - id: 'team_3b8c4d2f6g9h5j7k'
-                        role: 'viewer'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       responses:
         '201':
@@ -139,74 +77,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserCreateOneResponse'
-              examples:
-                createdUser:
-                  summary: Successfully created user
-                  value:
-                    data:
-                      email: 'alice.johnson@example.com'
-                      roles:
-                        global: ['contributor']
-                        teams:
-                          - id: 'team_7n4k5p8m2r6t9w3x'
-                            role: 'contributor'
-                          - id: 'team_3b8c4d2f6g9h5j7k'
-                            role: 'viewer'
-                      _type: 'user'
-                      _id: 'user_5h7j9k2m4n6p8r3t'
-                    relatedResources:
-                      'team_7n4k5p8m2r6t9w3x':
-                        _id: 'team_7n4k5p8m2r6t9w3x'
-                        _type: 'team'
-                        name: 'Performance Team'
-                      'team_3b8c4d2f6g9h5j7k':
-                        _id: 'team_3b8c4d2f6g9h5j7k'
-                        _type: 'team'
-                        name: 'QA Automation Team'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-              examples:
-                userAlreadyExists:
-                  summary: User already exists
-                  value:
-                    code: 'USER_ALREADY_EXISTS_ERROR'
-                    message: 'User with email 'alice.johnson@example.com' already exists'
-                    reference: 'https://docs.gatling.io/api/public/errors#USER_ALREADY_EXISTS_ERROR'
-                    values:
-                      email: 'alice.johnson@example.com'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
-              examples:
-                goneError:
-                  summary: Resource no longer available
-                  value:
-                    code: 'RESOURCE_GONE_ERROR'
-                    message: 'The requested resource is no longer available'
-                    reference: 'https://docs.gatling.io/api/public/errors#RESOURCE_GONE_ERROR'
-                    values: {}
         '422':
           description: UnprocessableContentError 422 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
-              examples:
-                invalidEmail:
-                  summary: Invalid email format
-                  value:
-                    code: 'INVALID_EMAIL_ERROR'
-                    message: 'The provided email is not valid'
-                    reference: 'https://docs.gatling.io/api/public/errors#INVALID_EMAIL_ERROR'
-                    values:
-                      email: 'not-an-email'
   /api/public/v2/users/{userId}:
     delete:
       operationId: UserDeleteOne
@@ -216,57 +122,39 @@ paths:
           schema:
             type: string
           required: true
-          examples:
-            validUserId:
-              summary: Valid user ID
-              value: 'user_4f6g8h2j3k5m7n9p'
       responses:
         '204':
           description: UserDeleteOne 204 response
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-              examples:
-                cannotDeleteUser:
-                  summary: Cannot delete user with active resources
-                  value:
-                    code: 'USER_HAS_ACTIVE_RESOURCES_ERROR'
-                    message: 'Cannot delete user 'user_4f6g8h2j3k5m7n9p' with active resources'
-                    reference: 'https://docs.gatling.io/api/public/errors#USER_HAS_ACTIVE_RESOURCES_ERROR'
-                    values:
-                      userId: 'user_4f6g8h2j3k5m7n9p'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
-              examples:
-                goneError:
-                  summary: Resource no longer available
-                  value:
-                    code: 'RESOURCE_GONE_ERROR'
-                    message: 'The requested resource is no longer available'
-                    reference: 'https://docs.gatling.io/api/public/errors#RESOURCE_GONE_ERROR'
-                    values: {}
         '422':
           description: UnprocessableContentError 422 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
-              examples:
-                invalidUserId:
-                  summary: Invalid user ID format
-                  value:
-                    code: 'INVALID_USER_ID_ERROR'
-                    message: 'Invalid ID string: user_invalid'
-                    reference: 'https://docs.gatling.io/api/public/errors#INVALID_USER_ID_ERROR'
-                    values:
-                      userId: 'user_invalid'
     get:
       operationId: UserReadOne
       parameters:
@@ -275,10 +163,6 @@ paths:
           schema:
             type: string
           required: true
-          examples:
-            validUserId:
-              summary: Valid user ID
-              value: 'user_4f6g8h2j3k5m7n9p'
       responses:
         '200':
           description: UserReadOne 200 response
@@ -286,98 +170,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserReadOneResponse'
-              examples:
-                userWithTeams:
-                  summary: User with multiple team memberships
-                  value:
-                    data:
-                      email: 'john.doe@example.com'
-                      roles:
-                        global: ['administrator']
-                        teams:
-                          - id: 'team_7n4k5p8m2r6t9w3x'
-                            role: 'administrator'
-                          - id: 'team_3b8c4d2f6g9h5j7k'
-                            role: 'leader'
-                          - id: 'team_5h7j9k2m4n6p8r3t'
-                            role: 'contributor'
-                      _type: 'user'
-                      _id: 'user_4f6g8h2j3k5m7n9p'
-                    relatedResources:
-                      'team_7n4k5p8m2r6t9w3x':
-                        _id: 'team_7n4k5p8m2r6t9w3x'
-                        _type: 'team'
-                        name: 'Performance Team'
-                      'team_3b8c4d2f6g9h5j7k':
-                        _id: 'team_3b8c4d2f6g9h5j7k'
-                        _type: 'team'
-                        name: 'QA Automation Team'
-                      'team_5h7j9k2m4n6p8r3t':
-                        _id: 'team_5h7j9k2m4n6p8r3t'
-                        _type: 'team'
-                        name: 'Platform Engineering Team'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-              examples:
-                conflictError:
-                  summary: Generic conflict error
-                  value:
-                    code: 'RESOURCE_CONFLICT_ERROR'
-                    message: 'The requested operation conflicts with the current state of the resource'
-                    reference: 'https://docs.gatling.io/api/public/errors#RESOURCE_CONFLICT_ERROR'
-                    values: {}
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
-              examples:
-                goneError:
-                  summary: Resource no longer available
-                  value:
-                    code: 'RESOURCE_GONE_ERROR'
-                    message: 'The requested resource is no longer available'
-                    reference: 'https://docs.gatling.io/api/public/errors#RESOURCE_GONE_ERROR'
-                    values: {}
         '422':
           description: UnprocessableContentError 422 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
-              examples:
-                userNotFound:
-                  summary: User not found
-                  value:
-                    code: 'USER_NOT_FOUND_ERROR'
-                    message: 'User 'user_4f6g8h2j3k5m7n9p' not found'
-                    reference: 'https://docs.gatling.io/api/public/errors#USER_NOT_FOUND_ERROR'
-                    values:
-                      userId: 'user_4f6g8h2j3k5m7n9p'
     put:
       operationId: UserUpdateOne
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserItemRequest'
-            examples:
-              updateUserRoles:
-                summary: Update user roles and team memberships
-                value:
-                  email: 'john.doe@example.com'
-                  roles:
-                    global: ['leader']
-                    teams:
-                      - id: 'team_7n4k5p8m2r6t9w3x'
-                        role: 'leader'
-                      - id: 'team_9p2m5k8n3r6t4w7x'
-                        role: 'administrator'
+              $ref: '#/components/schemas/UserRequest'
         required: true
       parameters:
         - name: userId
@@ -385,10 +220,6 @@ paths:
           schema:
             type: string
           required: true
-          examples:
-            validUserId:
-              summary: Valid user ID
-              value: 'user_4f6g8h2j3k5m7n9p'
       responses:
         '200':
           description: UserUpdateOne 200 response
@@ -396,74 +227,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserUpdateOneResponse'
-              examples:
-                updatedUser:
-                  summary: Successfully updated user
-                  value:
-                    data:
-                      email: 'john.doe@example.com'
-                      roles:
-                        global: ['leader']
-                        teams:
-                          - id: 'team_7n4k5p8m2r6t9w3x'
-                            role: 'leader'
-                          - id: 'team_9p2m5k8n3r6t4w7x'
-                            role: 'administrator'
-                      _type: 'user'
-                      _id: 'user_4f6g8h2j3k5m7n9p'
-                    relatedResources:
-                      'team_7n4k5p8m2r6t9w3x':
-                        _id: 'team_7n4k5p8m2r6t9w3x'
-                        _type: 'team'
-                        name: 'Performance Team'
-                      'team_9p2m5k8n3r6t4w7x':
-                        _id: 'team_9p2m5k8n3r6t4w7x'
-                        _type: 'team'
-                        name: 'DevOps Team'
+        '400':
+          description: BadRequestError 400 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestErrorResponseContent'
+        '401':
+          description: UnauthorizedError 401 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorResponseContent'
+        '403':
+          description: ForbiddenError 403 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenErrorResponseContent'
+        '404':
+          description: NotFoundError 404 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundErrorResponseContent'
         '409':
           description: ConflictError 409 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConflictErrorResponseContent'
-              examples:
-                emailAlreadyInUse:
-                  summary: Email already in use by another user
-                  value:
-                    code: 'EMAIL_ALREADY_IN_USE_ERROR'
-                    message: 'Email 'john.doe@example.com' is already in use by another user'
-                    reference: 'https://docs.gatling.io/api/public/errors#EMAIL_ALREADY_IN_USE_ERROR'
-                    values:
-                      email: 'john.doe@example.com'
-        '410':
-          description: GoneError 410 response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GoneErrorResponseContent'
-              examples:
-                goneError:
-                  summary: Resource no longer available
-                  value:
-                    code: 'RESOURCE_GONE_ERROR'
-                    message: 'The requested resource is no longer available'
-                    reference: 'https://docs.gatling.io/api/public/errors#RESOURCE_GONE_ERROR'
-                    values: {}
         '422':
           description: UnprocessableContentError 422 response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnprocessableContentErrorResponseContent'
-              examples:
-                invalidRole:
-                  summary: Invalid role specified
-                  value:
-                    code: 'INVALID_ROLE_ERROR'
-                    message: 'Invalid role 'superadmin' specified'
-                    reference: 'https://docs.gatling.io/api/public/errors#INVALID_ROLE_ERROR'
-                    values:
-                      role: 'superadmin'
 components:
   schemas:
     ApiTokenBriefResponse:
@@ -472,22 +271,42 @@ components:
         name:
           type: string
         _type:
-          $ref: '#/components/schemas/_ApiTokenType'
+          allOf:
+            - $ref: '#/components/schemas/_ApiTokenType'
+            - default: api_token
         _id:
           type: string
       required:
         - _id
         - _type
         - name
+    BadRequestErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
     BriefResponse:
       oneOf:
-        - $ref: '#/components/schemas/PackageBriefDto'
-        - $ref: '#/components/schemas/SimulationBriefDto'
-        - $ref: '#/components/schemas/TeamBriefResponse'
         - $ref: '#/components/schemas/ApiTokenBriefResponse'
+        - $ref: '#/components/schemas/ManagedLocationBriefResponse'
+        - $ref: '#/components/schemas/PackageBriefResponse'
+        - $ref: '#/components/schemas/PrivateLocationBriefResponse'
+        - $ref: '#/components/schemas/SourceRepositoryBriefResponse'
+        - $ref: '#/components/schemas/SsoGroupBriefResponse'
+        - $ref: '#/components/schemas/TeamBriefResponse'
+        - $ref: '#/components/schemas/TestBriefResponse'
         - $ref: '#/components/schemas/UserBriefResponse'
-        - $ref: '#/components/schemas/SourcesRepositoryBriefDto'
-        - $ref: '#/components/schemas/SsoGroupBriefDto'
     BriefResponseByResourceMap:
       type: object
       additionalProperties:
@@ -497,103 +316,143 @@ components:
       properties:
         code:
           type: string
-          pattern: ^[A-Z]+(_[A-Z]+)+$
         message:
           type: string
-        reference:
-          type: string
-        values: {}
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
       required:
         - code
         - message
-        - reference
-        - values
-    GlobalRole:
-      type: string
-      enum:
-        - none
-        - administrator
-        - leader
-        - contributor
-        - viewer
-    GoneErrorResponseContent:
+    ErrorContent:
       type: object
       properties:
         code:
           type: string
-          pattern: ^[A-Z]+(_[A-Z]+)+$
         message:
           type: string
-        reference:
-          type: string
-        values: {}
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
       required:
         - code
         - message
-        - reference
-        - values
-    PackageBriefDto:
+    ForbiddenErrorResponseContent:
       type: object
       properties:
-        _type:
-          $ref: '#/components/schemas/_PackageType'
-        _id:
+        code:
           type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
+    ManagedLocationBriefResponse:
+      type: object
+      properties:
         name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_ManagedLocationType'
+            - default: managed_location
+        _id:
           type: string
       required:
         - _id
         - _type
         - name
-    SimulationBriefDto:
+    NotFoundErrorResponseContent:
       type: object
       properties:
-        _type:
-          $ref: '#/components/schemas/_SimulationType'
-        _id:
+        code:
           type: string
-        name:
+        message:
           type: string
-        teamName:
-          type: string
-        simulationType:
-          $ref: '#/components/schemas/SimulationTypeResponse'
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
       required:
-        - _id
-        - _type
-        - name
-        - simulationType
-        - teamName
-    SimulationTypeResponse:
-      type: string
-      enum:
-        - pkg
-        - noCode
-        - build
-    SourcesRepositoryBriefDto:
+        - code
+        - message
+    PackageBriefResponse:
       type: object
       properties:
-        _type:
-          $ref: '#/components/schemas/_SourcesRepositoryType'
-        _id:
-          type: string
         name:
           type: string
-        url:
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_PackageType'
+            - default: package
+        _id:
           type: string
       required:
         - _id
         - _type
         - name
-        - url
-    SsoGroupBriefDto:
+    PrivateLocationBriefResponse:
       type: object
       properties:
         _type:
-          $ref: '#/components/schemas/_SsoGroupType'
+          allOf:
+            - $ref: '#/components/schemas/_PrivateLocationType'
+            - default: private_location
         _id:
           type: string
+      required:
+        - _id
+        - _type
+    SimpleDictionary:
+      type: object
+      additionalProperties:
+        type: string
+    SourceBrief:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/TestTypeResponse'
+      required:
+        - type
+    SourceRepositoryBriefResponse:
+      type: object
+      properties:
         name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SourceRepositoryType'
+            - default: source_repository
+        _id:
+          type: string
+      required:
+        - _id
+        - _type
+        - name
+    SsoGroupBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_SsoGroupType'
+            - default: sso_group
+        _id:
           type: string
       required:
         - _id
@@ -605,53 +464,90 @@ components:
         name:
           type: string
         _type:
-          $ref: '#/components/schemas/_TeamType'
+          allOf:
+            - $ref: '#/components/schemas/_TeamType'
+            - default: team
         _id:
           type: string
       required:
         - _id
         - _type
         - name
-    TeamRole:
-      type: string
-      enum:
-        - administrator
-        - leader
-        - contributor
-        - viewer
     TeamRoleMember:
       type: object
       properties:
         id:
           type: string
         role:
-          $ref: '#/components/schemas/TeamRole'
+          $ref: '#/components/schemas/UserRoleV2'
       required:
         - id
         - role
+    TestBriefResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        _type:
+          allOf:
+            - $ref: '#/components/schemas/_TestType'
+            - default: test
+        _id:
+          type: string
+        source:
+          $ref: '#/components/schemas/SourceBrief'
+      required:
+        - _id
+        - _type
+        - name
+        - source
+    TestTypeResponse:
+      type: string
+      enum:
+        - build_from_sources
+        - packaged
+        - no_code
+    UnauthorizedErrorResponseContent:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
+      required:
+        - code
+        - message
     UnprocessableContentErrorResponseContent:
       type: object
       properties:
         code:
           type: string
-          pattern: ^[A-Z]+(_[A-Z]+)+$
         message:
           type: string
-        reference:
-          type: string
-        values: {}
+        reasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorContent'
+        values:
+          $ref: '#/components/schemas/SimpleDictionary'
       required:
         - code
         - message
-        - reference
-        - values
     UserBriefResponse:
       type: object
       properties:
         email:
           type: string
         _type:
-          $ref: '#/components/schemas/_User'
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
         _id:
           type: string
       required:
@@ -675,24 +571,22 @@ components:
           type: string
         roles:
           $ref: '#/components/schemas/UserRoles'
+        firstName:
+          type: string
+        lastName:
+          type: string
         _type:
-          $ref: '#/components/schemas/_User'
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
         _id:
           type: string
       required:
         - _id
         - _type
         - email
-        - roles
-    UserItemRequest:
-      type: object
-      properties:
-        email:
-          type: string
-        roles:
-          $ref: '#/components/schemas/UserRoles'
-      required:
-        - email
+        - firstName
+        - lastName
         - roles
     UserItemResponse:
       type: object
@@ -701,14 +595,22 @@ components:
           type: string
         roles:
           $ref: '#/components/schemas/UserRoles'
+        firstName:
+          type: string
+        lastName:
+          type: string
         _type:
-          $ref: '#/components/schemas/_User'
+          allOf:
+            - $ref: '#/components/schemas/_UserType'
+            - default: user
         _id:
           type: string
       required:
         - _id
         - _type
         - email
+        - firstName
+        - lastName
         - roles
     UserReadAllResponse:
       type: object
@@ -732,13 +634,37 @@ components:
       required:
         - data
         - relatedResources
+    UserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        roles:
+          $ref: '#/components/schemas/UserRoles'
+        firstName:
+          type: string
+        lastName:
+          type: string
+      required:
+        - email
+        - firstName
+        - lastName
+        - roles
+    UserRoleV2:
+      type: string
+      enum:
+        - administrator
+        - leader
+        - tester
+        - contributor
+        - viewer
     UserRoles:
       type: object
       properties:
         global:
           type: array
           items:
-            $ref: '#/components/schemas/GlobalRole'
+            $ref: '#/components/schemas/UserRoleV2'
         teams:
           type: array
           items:
@@ -757,18 +683,22 @@ components:
       type: string
       enum:
         - api_token
+    _ManagedLocationType:
+      type: string
+      enum:
+        - managed_location
     _PackageType:
       type: string
       enum:
         - package
-    _SimulationType:
+    _PrivateLocationType:
       type: string
       enum:
-        - simulation
-    _SourcesRepositoryType:
+        - private_location
+    _SourceRepositoryType:
       type: string
       enum:
-        - sources_repository
+        - source_repository
     _SsoGroupType:
       type: string
       enum:
@@ -777,7 +707,11 @@ components:
       type: string
       enum:
         - team
-    _User:
+    _TestType:
+      type: string
+      enum:
+        - test
+    _UserType:
       type: string
       enum:
         - user
